@@ -10,20 +10,20 @@ option(AUDIO_PLAYER_BUILD_EXAMPLE "Build example" ON)
 if(AUDIO_PLAYER_BUILD_EXAMPLE)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-    add_executable(audio_example
-        example/play.cpp
-        src/Music.cpp
-    )
-
-    target_include_directories(audio_example PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/third_party
-    )
-    target_link_libraries(audio_example PRIVATE Threads::Threads ${CMAKE_DL_LIBS})
-
-    add_custom_command(TARGET audio_example POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_CURRENT_SOURCE_DIR}/sound
-            $<TARGET_FILE_DIR:audio_example>/sound
-    )
+    file(GLOB EXAMPLE_SOURCES example/*.cpp)
+    foreach(src ${EXAMPLE_SOURCES})
+        get_filename_component(name ${src} NAME_WE)
+        set(target ${name}-example)
+        add_executable(${target} ${src} src/Music.cpp)
+        target_include_directories(${target} PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/third_party
+        )
+        target_link_libraries(${target} PRIVATE Threads::Threads ${CMAKE_DL_LIBS})
+        add_custom_command(TARGET ${target} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_CURRENT_SOURCE_DIR}/sound
+                $<TARGET_FILE_DIR:${target}>/sound
+        )
+    endforeach()
 endif()

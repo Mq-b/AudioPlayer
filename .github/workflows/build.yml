@@ -42,8 +42,7 @@ jobs:
         run: |
           mkdir -p dist/AudioPlayer
           cp -r sound dist/AudioPlayer/
-          exe=$(find build/bin -name "audio_example*" -type f | head -1)
-          cp "$exe" dist/AudioPlayer/
+          find build/bin -maxdepth 1 -name "*-example*" -type f -exec cp {} dist/AudioPlayer/ \;
           cd dist && 7z a -tzip ../AudioPlayer-${{ matrix.name }}.zip AudioPlayer
 
       - name: 上传产物

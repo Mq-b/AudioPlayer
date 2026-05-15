@@ -28,7 +28,8 @@ cmake --build . -j
 运行示例：
 
 ```bash
-./bin/audio_example
+./bin/play-example     # 自动播放演示
+./bin/cli-example      # 交互式命令行
 ```
 
 ## 集成到你的项目
@@ -82,6 +83,22 @@ player.setEnabled("alert", true);
 player.play("alert"); // 正常播放
 ```
 
+## CLI 示例
+
+交互式命令行工具，自动注册指定目录下的音频文件：
+
+```bash
+./bin/cli-example [sound_dir]   # 默认 ./sound
+```
+
+命令：
+
+- `p <key>` — 播放
+- `d <key>` — 禁用
+- `e <key>` — 启用
+- `l` — 列出所有声音及状态
+- `q` — 退出
+
 ## 项目结构
 
 ```txt
@@ -97,7 +114,8 @@ AudioPlayer/
 ├── third_party/
 │   └── miniaudio.h          # miniaudio v0.11.21
 ├── example/
-│   └── play.cpp
+│   ├── play.cpp             # 自动播放演示
+│   └── cli.cpp              # 交互式命令行
 └── sound/                   # 示例音频文件
 ```
 

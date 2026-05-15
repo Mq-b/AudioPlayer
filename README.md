@@ -17,6 +17,18 @@
 - miniaudio（已包含在 `third_party/` 中）
 - pthread（Linux）
 
+## 系统要求
+
+本库通过 [miniaudio](https://miniaud.io/) 访问系统音频，运行时依赖系统音频后端：
+
+|系统|音频后端|要求|
+|---|---|---|
+|Linux (桌面)|ALSA / PulseAudio|现代发行版默认满足|
+|Linux (嵌入式)|ALSA|需内核 ALSA 驱动 + `libasound`|
+|Windows|WASAPI|Win7+ 自带|
+
+> 嵌入式 Linux：推荐使用 ALSA 后端，内核需启用 `CONFIG_SND` 相关选项，用户空间需 `alsa-lib`（libasound）。miniaudio 运行时通过 `dlopen` 动态加载，编译时无需显式链接。
+
 ## 构建
 
 ```bash
@@ -118,6 +130,10 @@ AudioPlayer/
 │   └── cli.cpp              # 交互式命令行
 └── sound/                   # 示例音频文件
 ```
+
+## 音频制作
+
+如需生成 TTS 语音文件作为播放资源，可使用 [tts-vue-next](https://github.com/LokerL/tts-vue-next)，支持多种 TTS 引擎，可批量导出音频文件。
 
 ## 许可证
 

@@ -1,5 +1,6 @@
 #define MINIAUDIO_IMPLEMENTATION
 #include "AudioPlayer/Music.h"
+#include <chrono>
 #include <iostream>
 #include <thread>
 using namespace std::chrono_literals;

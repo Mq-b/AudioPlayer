@@ -44,7 +44,7 @@ jobs:
           cp -r sound dist/AudioPlayer/
           exe=$(find build/bin -name "audio_example*" -type f | head -1)
           cp "$exe" dist/AudioPlayer/
-          cd dist && zip -r ../AudioPlayer-${{ matrix.name }}.zip AudioPlayer
+          cd dist && 7z a -tzip ../AudioPlayer-${{ matrix.name }}.zip AudioPlayer
 
       - name: 上传产物
         uses: actions/upload-artifact@v4

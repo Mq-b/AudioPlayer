@@ -1,0 +1,78 @@
+name: Build
+
+on:
+  push:
+    branches: [main,master]
+    tags: ["v*"]
+  pull_request:
+    branches: [main,master]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            name: ubuntu-22.04
+          - os: ubuntu-24.04
+            name: ubuntu-24.04
+          - os: windows-2019
+            name: windows-10
+          - os: windows-latest
+            name: windows-latest
+
+    runs-on: ${{ matrix.os }}
+    name: Build (${{ matrix.name }})
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 缓存编译产物
+        uses: actions/cache@v4
+        with:
+          path: build
+          key: build-${{ matrix.name }}-${{ hashFiles('src/**', 'include/**', 'third_party/**', 'CMakeLists.txt') }}
+
+      - name: 构建
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --config Release -j
+
+      - name: 打包
+        shell: bash
+        run: |
+          mkdir -p dist/AudioPlayer
+          cp -r sound dist/AudioPlayer/
+          if [ -f build/bin/audio_example.exe ]; then
+            cp build/bin/audio_example.exe dist/AudioPlayer/
+          else
+            cp build/bin/audio_example dist/AudioPlayer/
+          fi
+          cd dist && zip -r ../AudioPlayer-${{ matrix.name }}.zip AudioPlayer
+
+      - name: 上传产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: AudioPlayer-${{ matrix.name }}
+          path: AudioPlayer-${{ matrix.name }}.zip
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 下载所有产物
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: 发布
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*.zip
+          generate_release_notes: true

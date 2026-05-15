@@ -17,8 +17,6 @@ jobs:
             name: ubuntu-22.04
           - os: ubuntu-24.04
             name: ubuntu-24.04
-          - os: windows-2019
-            name: windows-10
           - os: windows-latest
             name: windows-latest
 
@@ -44,11 +42,8 @@ jobs:
         run: |
           mkdir -p dist/AudioPlayer
           cp -r sound dist/AudioPlayer/
-          if [ -f build/bin/audio_example.exe ]; then
-            cp build/bin/audio_example.exe dist/AudioPlayer/
-          else
-            cp build/bin/audio_example dist/AudioPlayer/
-          fi
+          exe=$(find build/bin -name "audio_example*" -type f | head -1)
+          cp "$exe" dist/AudioPlayer/
           cd dist && zip -r ../AudioPlayer-${{ matrix.name }}.zip AudioPlayer
 
       - name: 上传产物
